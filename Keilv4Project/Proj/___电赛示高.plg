@@ -1,0 +1,20 @@
+<html>
+<body>
+<pre>
+<h1>礦ision Build Log</h1>
+<h2>Project:</h2>
+D:\360data\重要数据\桌面\___电赛示高\Proj\___电赛示高.uvproj
+Project File Date:  08/14/2015
+
+<h2>Output:</h2>
+Rebuild target '___电赛示高'
+compiling main.c...
+linking...
+Program Size: data=9.0 xdata=0 code=17
+"..\___电赛示高" - 0 Error(s), 0 Warning(s).
+Rebuild target '___电赛示高'
+compiling main.c...
+linking...
+Program Size: data=9.0 xdata=0 code=17
+creating hex file from "..\___电赛示高"...
+"..\___电赛示高" - 0 Error(s), 0 Warning(s).

@@ -1,0 +1,143 @@
+C51 COMPILER V9.52.0.0   LCD1602                                                           08/15/2015 01:49:17 PAGE 1   
+
+
+C51 COMPILER V9.52.0.0, COMPILATION OF MODULE LCD1602
+OBJECT MODULE PLACED IN ..\Obj\LCD1602.obj
+COMPILER INVOKED BY: D:\Keil\C51\BIN\C51.EXE ..\Usr\LCD1602.c LARGE OMF2 BROWSE DEBUG PRINT(..\Lst\LCD1602.lst) TABS(2) 
+                    -OBJECT(..\Obj\LCD1602.obj)
+
+line level    source
+
+   1          #include "LCD1602.h"
+*** ERROR C141 IN LINE 52 OF ..\Usr\LCD1602.h: syntax error near 'static'
+*** ERROR C141 IN LINE 56 OF ..\Usr\LCD1602.h: syntax error near ';', expected ']'
+   2          
+   3          
+   4              static unsigned char DisNum = 0; //显示用指针         
+*** ERROR C231 IN LINE 4 OF ..\Usr\LCD1602.c: 'DisNum': redefinition
+   5                     unsigned int  time = 0;
+   6                     unsigned long S = 0;
+   7                     bit           flag = 0;
+   8                     unsigned char disbuff[4] = { 0,0,0,0,};
+   9          
+  10          //写数据
+  11          void WriteDataLCM(unsigned char WDLCM) 
+  12          {
+  13   1        ReadStatusLCM(); //检测忙
+  14   1        LCM_Data = WDLCM;
+  15   1        LCM_RS = 1;
+  16   1        LCM_RW = 0;
+  17   1        LCM_E = 0; //若晶振速度太高可以在这后加小的延时
+  18   1        LCM_E = 0; //延时
+  19   1        LCM_E = 1;
+  20   1      }
+  21          
+  22          //写指令
+  23          void WriteCommandLCM(unsigned char WCLCM,BuysC) //BuysC为0时忽略忙检测
+  24          {
+  25   1        if(BuysC) ReadStatusLCM(); //根据需要检测忙
+  26   1        LCM_Data = WCLCM;
+  27   1        LCM_RS = 0;
+  28   1        LCM_RW = 0; 
+  29   1        LCM_E = 0;
+  30   1        LCM_E = 0;
+  31   1        LCM_E = 1;  
+  32   1      }
+  33          
+  34          //读数据
+  35          unsigned char ReadDataLCM(void)
+  36          {
+  37   1        LCM_RS = 1; 
+  38   1        LCM_RW = 1;
+  39   1        LCM_E = 0;
+  40   1        LCM_E = 0;
+  41   1        LCM_E = 1;
+  42   1        return(LCM_Data);
+  43   1      }
+  44          
+  45          //读状态
+  46          unsigned char ReadStatusLCM(void)
+  47          {
+  48   1        LCM_Data = 0xFF; 
+  49   1        LCM_RS = 0;
+  50   1        LCM_RW = 1;
+  51   1        LCM_E = 0;
+C51 COMPILER V9.52.0.0   LCD1602                                                           08/15/2015 01:49:17 PAGE 2   
+
+  52   1        LCM_E = 0;
+  53   1        LCM_E = 1;
+  54   1        while (LCM_Data & Busy); //检测忙信号
+  55   1        return(LCM_Data);
+  56   1      }
+  57          
+  58          void LCMInit(void) //LCM初始化
+  59          {
+  60   1        LCM_Data = 0;
+  61   1        WriteCommandLCM(0x38,0); //三次显示模式设置，不检测忙信号
+  62   1        Delay5Ms(); 
+  63   1        WriteCommandLCM(0x38,0);
+  64   1        Delay5Ms(); 
+  65   1        WriteCommandLCM(0x38,0);
+  66   1        Delay5Ms(); 
+  67   1      
+  68   1        WriteCommandLCM(0x38,1); //显示模式设置,开始要求每次检测忙信号
+  69   1        WriteCommandLCM(0x08,1); //关闭显示
+  70   1        WriteCommandLCM(0x01,1); //显示清屏
+  71   1        WriteCommandLCM(0x06,1); // 显示光标移动设置
+  72   1        WriteCommandLCM(0x0F,1); // 显示开及光标设置
+  73   1      }
+  74          
+  75          //按指定位置显示一个字符
+  76          void DisplayOneChar(unsigned char X, unsigned char Y, unsigned char DData)
+  77          {
+  78   1        Y &= 0x1;
+  79   1        X &= 0xF; //限制X不能大于15，Y不能大于1
+  80   1        if (Y) X |= 0x40; //当要显示第二行时地址码+0x40;
+  81   1        X |= 0x80; //算出指令码
+  82   1        WriteCommandLCM(X, 1); //发命令字
+  83   1        WriteDataLCM(DData); //发数据
+  84   1      }
+  85          
+  86          //按指定位置显示一串字符
+  87          void DisplayListChar(unsigned char X, unsigned char Y, unsigned char code *DData)
+  88          {
+  89   1        unsigned char ListLength;
+  90   1      
+  91   1        ListLength = 0;
+  92   1        Y &= 0x1;
+  93   1        X &= 0xF; //限制X不能大于15，Y不能大于1
+  94   1        while (DData[ListLength]>0x19) //若到达字串尾则退出
+  95   1          {
+  96   2            if (X <= 0xF) //X坐标应小于0xF
+  97   2              {
+  98   3                DisplayOneChar(X, Y, DData[ListLength]); //显示单个字符
+  99   3                ListLength++;
+ 100   3                X++;
+ 101   3              }
+ 102   2          }
+ 103   1      }
+ 104          
+ 105          
+ 106          
+ 107          //5ms延时
+ 108          void Delay5Ms(void)
+ 109          {
+ 110   1        unsigned int TempCyc = 5552;
+ 111   1        while(TempCyc--);
+ 112   1      }
+ 113          
+C51 COMPILER V9.52.0.0   LCD1602                                                           08/15/2015 01:49:17 PAGE 3   
+
+ 114          //400ms延时
+ 115          void Delay400Ms(void)
+ 116          {
+ 117   1        unsigned char TempCycA = 5;
+ 118   1        unsigned int TempCycB;
+ 119   1        while(TempCycA--)
+ 120   1          {
+ 121   2            TempCycB=7269;
+ 122   2            while(TempCycB--);
+ 123   2          };
+ 124   1      }
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  3 ERROR(S)

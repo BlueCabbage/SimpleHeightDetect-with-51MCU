@@ -1,0 +1,99 @@
+C51 COMPILER V9.52.0.0   SR04                                                              08/15/2015 01:49:18 PAGE 1   
+
+
+C51 COMPILER V9.52.0.0, COMPILATION OF MODULE SR04
+OBJECT MODULE PLACED IN ..\Obj\SR04.obj
+COMPILER INVOKED BY: D:\Keil\C51\BIN\C51.EXE ..\Usr\SR04.c LARGE OMF2 BROWSE DEBUG PRINT(..\Lst\SR04.lst) TABS(2) OBJECT
+                    -(..\Obj\SR04.obj)
+
+line level    source
+
+   1          #include "SR04.h"
+*** ERROR C141 IN LINE 52 OF ..\Usr\LCD1602.h: syntax error near 'static'
+*** ERROR C141 IN LINE 56 OF ..\Usr\LCD1602.h: syntax error near ';', expected ']'
+   2          #include "LCD1602.h"
+   3          #include "reg52.h"
+   4          #include <intrins.h>
+   5          
+   6          /********************************************************/
+   7             void Conut(void)
+   8            {
+   9   1           time = TH0*256+TL0;
+  10   1           TH0 = 0;
+  11   1           TL0 = 0;
+  12   1          
+  13   1           S=(time*1.7)/100;     //算出来是CM
+  14   1           if((S>=700)||flag==1) //超出测量范围显示“-”
+  15   1           {   
+  16   2              flag=0;
+  17   2             
+  18   2              DisplayOneChar(0, 1, ASCII[11]);
+  19   2              DisplayOneChar(1, 1, ASCII[10]);  //显示点
+  20   2              DisplayOneChar(2, 1, ASCII[11]);
+  21   2              DisplayOneChar(3, 1, ASCII[11]);
+  22   2              DisplayOneChar(4, 1, ASCII[12]);  //显示M
+  23   2           }
+  24   1           else
+  25   1           {
+  26   2              disbuff[0]=S%1000/100;
+*** ERROR C202 IN LINE 26 OF ..\Usr\SR04.c: 'disbuff': undefined identifier
+  27   2              disbuff[1]=S%1000%100/10;
+*** ERROR C202 IN LINE 27 OF ..\Usr\SR04.c: 'disbuff': undefined identifier
+  28   2              disbuff[2]=S%1000%10 %10;
+*** ERROR C202 IN LINE 28 OF ..\Usr\SR04.c: 'disbuff': undefined identifier
+  29   2              DisplayOneChar(0, 1, ASCII[disbuff[0]]);
+*** ERROR C202 IN LINE 29 OF ..\Usr\SR04.c: 'disbuff': undefined identifier
+  30   2              DisplayOneChar(1, 1, ASCII[10]);  //显示点
+  31   2              DisplayOneChar(2, 1, ASCII[disbuff[1]]);
+*** ERROR C202 IN LINE 31 OF ..\Usr\SR04.c: 'disbuff': undefined identifier
+  32   2              DisplayOneChar(3, 1, ASCII[disbuff[2]]);
+*** ERROR C202 IN LINE 32 OF ..\Usr\SR04.c: 'disbuff': undefined identifier
+  33   2              DisplayOneChar(4, 1, ASCII[12]);  //显示M
+  34   2           }
+  35   1        }
+  36          
+  37          /********************************************************/
+  38               void  StartModule()             //启动模块
+  39            {
+  40   1          TX = 1;                          //启动一次模块
+  41   1          _nop_(); 
+  42   1          _nop_(); 
+  43   1          _nop_(); 
+  44   1          _nop_(); 
+  45   1          _nop_(); 
+  46   1          _nop_(); 
+C51 COMPILER V9.52.0.0   SR04                                                              08/15/2015 01:49:18 PAGE 2   
+
+  47   1          _nop_(); 
+  48   1          _nop_(); 
+  49   1          _nop_(); 
+  50   1          _nop_(); 
+  51   1          _nop_(); 
+  52   1          _nop_(); 
+  53   1          _nop_(); 
+  54   1          _nop_(); 
+  55   1          _nop_(); 
+  56   1          _nop_(); 
+  57   1          _nop_();
+  58   1          _nop_(); 
+  59   1          _nop_(); 
+  60   1          _nop_(); 
+  61   1          _nop_();
+  62   1          TX=0;
+  63   1        }
+  64          /********************************************************/ 
+  65          void delayms(unsigned int ms)
+  66          {
+  67   1        unsigned char i=100,j;
+  68   1        for(;ms;ms--)
+  69   1        {
+  70   2          while(--i)
+  71   2          {
+  72   3            j=10;
+  73   3            while(--j);
+  74   3          }
+  75   2        }
+  76   1      }
+  77          /*********************************************************/
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  8 ERROR(S)

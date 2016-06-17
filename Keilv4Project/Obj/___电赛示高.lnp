@@ -1,0 +1,4 @@
+"..\Obj\main.obj" 
+TO "..\Obj\___电赛示高" 
+
+PRINT("..\Lst\___电赛示高.map")
